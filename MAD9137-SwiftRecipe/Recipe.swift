@@ -7,3 +7,18 @@
 
 import SwiftUI
 
+
+//TODO: Create a struct named Recipe.
+
+
+
+
+
+
+//TODO: Add id property using UUID() to uniquely identify each recipe.
+
+
+
+
+
+//TODO: Include properties, all of type String: title, description, ingredients, steps
