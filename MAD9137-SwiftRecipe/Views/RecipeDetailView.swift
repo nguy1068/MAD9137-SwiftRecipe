@@ -7,6 +7,21 @@
 
 import SwiftUI
 
+struct RecipeDetailView: View {
+    var recipe: Recipe
+
+    var body: some View {
+        VStack {
+            Text(recipe.title)
+                .font(.largeTitle)
+            Text(recipe.description)
+                .font(.body)
+            // You can add more UI elements to display the recipe details
+        }
+        .navigationTitle(recipe.title)
+    }
+}
+
 //TODO: Display the full title, ingredients, and steps of the selected recipe.
 
 

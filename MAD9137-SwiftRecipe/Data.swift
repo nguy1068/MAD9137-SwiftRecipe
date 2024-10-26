@@ -13,15 +13,15 @@ import SwiftUI
 
 
 //TODO: Write functions to:
-Add new recipes to the array
+//Add new recipes to the array
 
 
 
 
-Edit existing recipes in the array
+//Edit existing recipes in the array
 
 
 
 
-Delete recipes from the array.
+//Delete recipes from the array.
 

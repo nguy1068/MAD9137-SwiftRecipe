@@ -7,17 +7,14 @@
 
 import SwiftUI
 
-//TODO: Add a TextField for each of these recipe properties: title, description, ingredients, and steps.
+struct AddRecipeView: View {
+    var body: some View {
+        Text("THIS IS ADD RECIPE")
+    }
+}
 
+// TODO: Add a TextField for each of these recipe properties: title, description, ingredients, and steps.
 
+// TODO: Decide how users will input ingredients and steps
 
-
-
-//TODO: Decide how users will input ingredients and steps
-
-
-
-
-
-
-//TODO: Include a button to save the new recipe.
+// TODO: Include a button to save the new recipe.
