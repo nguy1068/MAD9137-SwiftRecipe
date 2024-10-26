@@ -7,21 +7,21 @@
 
 import SwiftUI
 
+class RecipeData: ObservableObject {
+    @Published var recipes: [Recipe] = [defaultRecipe]
 
-//TODO: Create an array to hold all your recipe data.
+    // Function to add a new recipe
+    func addNewRecipe(recipe: Recipe) {
+        recipes.append(recipe)
+    }
 
+    // Function to edit an existing recipe
+    func editRecipe(at index: Int, with updatedRecipe: Recipe) {
+        recipes[index] = updatedRecipe
+    }
 
-
-//TODO: Write functions to:
-//Add new recipes to the array
-
-
-
-
-//Edit existing recipes in the array
-
-
-
-
-//Delete recipes from the array.
-
+    // Function to delete a recipe
+    func deleteRecipe(at index: Int) {
+        recipes.remove(at: index)
+    }
+}
