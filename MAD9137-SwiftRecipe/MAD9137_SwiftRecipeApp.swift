@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct MAD9137_SwiftRecipeApp: App {
+    
+    
     var body: some Scene {
         WindowGroup {
-            RecipeListView()
+            AddRecipeView()
         }
     }
 }

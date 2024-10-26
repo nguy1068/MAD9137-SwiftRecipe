@@ -8,13 +8,49 @@
 import SwiftUI
 
 struct AddRecipeView: View {
+    @State private var recipeTitle: String = ""
+    @State private var recipeDescription: String = ""
+    @State private var recipeIngredients: [String] = []
+    @State private var recipeSteps: [String] = []
+    @State private var recipePrepTime: Int = 0
+    @State private var recipeCookTime: Int = 0
+    @State private var showingImagePicker: Bool = false
+    @State private var inputImage: UIImage?
+    @State private var thumbnailImage: Image?
+    
+
     var body: some View {
-        Text("THIS IS ADD RECIPE")
+        NavigationStack {
+            ScrollView {
+                VStack {
+                    // Recipe Title
+                    TextInput(label: "Title", placeholder: "Enter recipe title", text: $recipeTitle)
+                    // Recipe Description
+                    TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription)
+                    // Ingredients
+                    IngredientListView(ingredients: $recipeIngredients)
+                    // Steps
+                    StepsListView(steps: $recipeSteps)
+                    // Times
+                    VStack {
+                        TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")
+                        TimeInputView(timeValue: $recipeCookTime, label: "Cook Time (mins)")
+                    }
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .automatic) {
+                    Text("Save")
+                        .font(.headline)
+                        .foregroundColor(.blue)
+                }
+            }
+        }
     }
 }
 
-// TODO: Add a TextField for each of these recipe properties: title, description, ingredients, and steps.
-
-// TODO: Decide how users will input ingredients and steps
-
-// TODO: Include a button to save the new recipe.
+struct AddRecipeView_Previews: PreviewProvider {
+    static var previews: some View {
+        AddRecipeView()
+    }
+}
