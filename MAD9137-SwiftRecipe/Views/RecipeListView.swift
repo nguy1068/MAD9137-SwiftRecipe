@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecipeListView: View {
-    @State private var recipes: [Recipe] = [defaultRecipe]
+    @EnvironmentObject var recipeData: RecipeData
     @State private var searchText = ""
     @State private var searchMode: SearchMode = .title
 
@@ -20,7 +20,7 @@ struct RecipeListView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(recipes.filter { recipe in
+                ForEach(recipeData.recipes.filter { recipe in
                     switch searchMode {
                     case .title:
                         // Filter by title
@@ -30,19 +30,21 @@ struct RecipeListView: View {
                         return searchText.isEmpty || recipe.ingredients.joined(separator: " ").localizedStandardContains(searchText)
                     }
                 }) { recipe in NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                    HStack {
+                    HStack(alignment: .top , spacing: 20) {
                         GeometryReader { geometry in
                             Image(recipe.thumbnailImagePath ?? "default_recipe")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(width: geometry.size.height, height: geometry.size.height) // Set width equal to height
+                                .frame(width: geometry.size.height, height: geometry.size.height)
                         }
-                        .frame(width: 80)
+                        .frame(width: 70, height: 70)
 
-                        VStack(alignment: .leading) {
+                        VStack(alignment: .leading , spacing: 10) {
                             Text(recipe.title)
                                 .font(.headline)
-                            Text(recipe.description)
+                            Text(recipe.description.count > 50
+                                ? String(recipe.description.prefix(50)) + "..."
+                                : recipe.description)
                                 .font(.subheadline)
                         }
                     }

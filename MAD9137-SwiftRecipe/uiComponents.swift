@@ -22,6 +22,9 @@ struct TextInput: View {
 
             TextField(placeholder, text: $text)
                 .focused($isFocused)
+                .onChange(of: text) { newValue in
+                    print("Current text input: \(newValue)")
+                }
                 .textFieldStyle(CustomTextFieldStyle(isFocused: isFocused))
                 .padding(.vertical, 5)
                 .frame(maxWidth: .infinity)
@@ -42,6 +45,7 @@ struct CustomTextFieldStyle: TextFieldStyle {
 
 // TextINPUT-----------------END
 
+// IngredientListView-----------------START
 struct IngredientListView: View {
     @Binding var ingredients: [String]
     @State private var newIngredient: String = ""
@@ -64,6 +68,9 @@ struct IngredientListView: View {
     }
 }
 
+// IngredientListView-----------------END
+
+// StepsListView-----------------START
 struct StepsListView: View {
     @Binding var steps: [String]
     @State private var newStep: String = ""
@@ -88,6 +95,9 @@ struct StepsListView: View {
     }
 }
 
+// StepsListView-----------------END
+
+// TimeInputView-----------------START
 struct TimeInputView: View {
     @Binding var timeValue: Int
     var label: String
@@ -96,10 +106,33 @@ struct TimeInputView: View {
         HStack {
             Text(label)
             Spacer()
-            Stepper(value: $timeValue, in: 0 ... Int.max, step: 1) {
+            Stepper(value: $timeValue, in: 0 ... 120, step: 1) {
                 Text("\(timeValue) mins")
             }
         }
         .padding(.horizontal)
     }
 }
+
+// TimeInputView-----------------END
+
+// ChipView-----------------START
+struct ChipView: View {
+    var label: String
+    var systemImage: String
+
+    var body: some View {
+        HStack {
+            Image(systemName: systemImage)
+            Text(label)
+        }
+        .padding(.horizontal, 10)
+        .padding(.vertical, 5)
+        .background(
+            Capsule()
+                .fill(Color.gray.opacity(0.2))
+        )
+    }
+}
+
+// ChipView-----------------END

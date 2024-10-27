@@ -9,11 +9,11 @@ import SwiftUI
 
 @main
 struct MAD9137_SwiftRecipeApp: App {
-    
-    
+    @StateObject private var recipeData = RecipeData()
     var body: some Scene {
         WindowGroup {
-            AddRecipeView()
+            RecipeListView()
+                .environmentObject(recipeData)
         }
     }
 }

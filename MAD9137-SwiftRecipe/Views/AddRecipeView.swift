@@ -8,6 +8,10 @@
 import SwiftUI
 
 struct AddRecipeView: View {
+    
+    @EnvironmentObject var recipeData: RecipeData
+    @Environment(\.dismiss) var dismiss: DismissAction
+    
     @State private var recipeTitle: String = ""
     @State private var recipeDescription: String = ""
     @State private var recipeIngredients: [String] = []
@@ -17,7 +21,7 @@ struct AddRecipeView: View {
     @State private var showingImagePicker: Bool = false
     @State private var inputImage: UIImage?
     @State private var thumbnailImage: Image?
-    
+
 
     var body: some View {
         NavigationStack {
@@ -40,9 +44,20 @@ struct AddRecipeView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Text("Save")
-                        .font(.headline)
-                        .foregroundColor(.blue)
+                    Button("Save") {
+                        let newRecipe = Recipe(
+                            title: recipeTitle,
+                            description: recipeDescription,
+                            ingredients: recipeIngredients,
+                            steps: recipeSteps,
+                            prepTime: recipePrepTime,
+                            cookTime: recipeCookTime
+                        )
+                        recipeData.addNewRecipe(recipe: newRecipe)
+                        dismiss()
+                    }
+                    .font(.headline)
+                    .foregroundColor(.blue)
                 }
             }
         }
@@ -52,5 +67,6 @@ struct AddRecipeView: View {
 struct AddRecipeView_Previews: PreviewProvider {
     static var previews: some View {
         AddRecipeView()
+           
     }
 }
