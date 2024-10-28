@@ -20,38 +20,51 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading) {
                 // Prep and Cook Time Chips
                 HStack {
-                    ChipView(label: "\(recipe.prepTime) mins", systemImage: "hourglass")
-                    ChipView(label: "\(recipe.cookTime) mins", systemImage: "flame")
+                    ChipView(label: "⌛️\(recipe.prepTime) mins")
+                    ChipView(label: "🔥\(recipe.cookTime) mins")
                 }
-                .padding(.bottom)
+                .padding(.horizontal)
+                .padding(.bottom, 10)
 
                 // Image with 16:9 ratio
-                Image(recipe.thumbnailImagePath ?? "default_recipe")
-                    .resizable()
-                    .aspectRatio(16 / 9, contentMode: .fit)
-                    .padding(.bottom)
+                let uiImage = loadImage(for: recipe) ?? UIImage(named: "default_recipe")
+                if let uiImage = uiImage {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 3 / 4)
+                        .clipped()
+                        .padding(.bottom, 5)
+                }
 
                 Text(recipe.description)
                     .font(.body)
-                    .padding(.bottom)
+                    .foregroundColor(.gray)
+                    .padding(.horizontal)
+                    .padding(.bottom, 10)
 
                 // Ingredients
-                Text("Ingredients:")
+                Text("🔗Ingredients:")
                     .font(.title2)
-                    .padding(.bottom)
+                    .padding(.horizontal)
+                    .padding(.bottom, 5)
+                    .padding(.top, 10)
 
                 ForEach(recipe.ingredients, id: \.self) { ingredient in
                     Text("• \(ingredient)")
-                        .padding(.bottom, 2)
+                        .padding(.horizontal)
+                        .padding(.bottom, 5)
                 }
 
                 // Steps with Checkboxes
-                Text("Steps:")
+                Text("⚡️Steps:")
                     .font(.title2)
-                    .padding(.bottom)
+                    .padding(.horizontal)
+                    .padding(.bottom, 10)
+                    .padding(.top, 10)
 
                 ForEach(Array(recipe.steps.enumerated()), id: \.offset) { index, step in
-                    HStack {
+                    HStack(alignment: .top) {
                         Button(action: {
                             completedSteps[index].toggle()
                         }) {
@@ -59,9 +72,10 @@ struct RecipeDetailView: View {
                                 ? "checkmark.square.fill"
                                 : "checkmark.square")
                         }
-                        Text(step)
+                        Text(step).padding(.top, -3)
                     }
-                    .padding(.bottom, 2)
+                    .padding(.horizontal)
+                    .padding(.bottom, 10)
                 }
             }
             .padding()
@@ -72,4 +86,3 @@ struct RecipeDetailView: View {
         }
     }
 }
-

@@ -106,7 +106,7 @@ struct TimeInputView: View {
         HStack {
             Text(label)
             Spacer()
-            Stepper(value: $timeValue, in: 0 ... 120, step: 1) {
+            Stepper(value: $timeValue, in: 0 ... 1440, step: 1) {
                 Text("\(timeValue) mins")
             }
         }
@@ -119,19 +119,14 @@ struct TimeInputView: View {
 // ChipView-----------------START
 struct ChipView: View {
     var label: String
-    var systemImage: String
-
     var body: some View {
-        HStack {
-            Image(systemName: systemImage)
-            Text(label)
-        }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
-        .background(
-            Capsule()
-                .fill(Color.gray.opacity(0.2))
-        )
+        Text(label)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
+            .background(
+                Capsule()
+                    .fill(Color.gray.opacity(0.2))
+            )
     }
 }
 

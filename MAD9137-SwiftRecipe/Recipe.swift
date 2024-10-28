@@ -15,8 +15,8 @@ struct Recipe: Identifiable {
     var description: String
     var ingredients: [String]
     var steps: [String]
-    var prepTime: Int // unit: minute
-    var cookTime: Int // unit: minute
+    var prepTime: Int 
+    var cookTime: Int 
 
     init(thumbnailImagePath: String? = "default_recipe", title: String, description: String, ingredients: [String], steps: [String], prepTime: Int, cookTime: Int) {
         self.thumbnailImagePath = thumbnailImagePath
