@@ -32,9 +32,53 @@ struct AddRecipeView: View {
                     // Recipe Description
                     TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription)
                     // Ingredients
-                    IngredientListView(ingredients: $recipeIngredients)
+                    VStack(alignment: .leading) {
+                        Text("Ingredients")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal)
+                        
+                        ForEach(recipeIngredients.indices, id: \.self) { index in
+                            HStack {
+                                Text(recipeIngredients[index])
+                                Spacer()
+                                Button(action: {
+                                    recipeIngredients.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        
+                        IngredientListView(ingredients: $recipeIngredients)
+                    }
+                    
                     // Steps
-                    StepsListView(steps: $recipeSteps)
+                    VStack(alignment: .leading) {
+                        Text("Steps")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal)
+                        
+                        ForEach(recipeSteps.indices, id: \.self) { index in
+                            HStack {
+                                Text(recipeSteps[index])
+                                Spacer()
+                                Button(action: {
+                                    recipeSteps.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        
+                        StepsListView(steps: $recipeSteps)
+                    }
+                    
                     // Times
                     VStack {
                         TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")

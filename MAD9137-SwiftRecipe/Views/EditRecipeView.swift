@@ -25,6 +25,8 @@ struct EditRecipeView: View {
     
     init(recipe: Recipe) {
         self.recipe = recipe
+        
+        // Initialize state variables with existing recipe data
         _recipeTitle = State(initialValue: recipe.title)
         _recipeDescription = State(initialValue: recipe.description)
         _recipeIngredients = State(initialValue: recipe.ingredients)
@@ -32,6 +34,7 @@ struct EditRecipeView: View {
         _recipePrepTime = State(initialValue: recipe.prepTime)
         _recipeCookTime = State(initialValue: recipe.cookTime)
         
+        // Load existing image if available
         if let imagePath = recipe.thumbnailImagePath,
            let uiImage = loadImage(for: recipe)
         {
@@ -48,44 +51,110 @@ struct EditRecipeView: View {
                     
                     TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription)
                     
-                    IngredientListView(ingredients: $recipeIngredients)
+                    // Ingredients
+                    VStack(alignment: .leading) {
+                        Text("Ingredients")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal)
+                        
+                        ForEach(recipeIngredients.indices, id: \.self) { index in
+                            HStack {
+                                Text(recipeIngredients[index])
+                                Spacer()
+                                Button(action: {
+                                    recipeIngredients.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        
+                        IngredientListView(ingredients: $recipeIngredients)
+                    }
                     
-                    StepsListView(steps: $recipeSteps)
+                    // Steps
+                    VStack(alignment: .leading) {
+                        Text("Steps")
+                            .font(.caption)
+                            .foregroundColor(.gray)
+                            .padding(.horizontal)
+                        
+                        ForEach(recipeSteps.indices, id: \.self) { index in
+                            HStack {
+                                Text(recipeSteps[index])
+                                Spacer()
+                                Button(action: {
+                                    recipeSteps.remove(at: index)
+                                }) {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            .padding(.horizontal)
+                        }
+                        
+                        StepsListView(steps: $recipeSteps)
+                    }
                     
                     VStack {
                         TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")
                         TimeInputView(timeValue: $recipeCookTime, label: "Cook Time (mins)")
                     }
                     
-                    PhotosPicker(
-                        selection: $selectedItem,
-                        matching: .images,
-                        photoLibrary: .shared()
-                    ) {
-                        if let thumbnailImage {
-                            thumbnailImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 200)
-                        } else {
+                    VStack {
+                        PhotosPicker(
+                            selection: $selectedItem,
+                            matching: .images,
+                            photoLibrary: .shared()
+                        ) {
                             Text("Select a Recipe Image")
                                 .frame(maxWidth: .infinity)
                                 .padding()
                                 .background(Color.blue.opacity(0.2))
                                 .cornerRadius(8)
                         }
-                    }
-                    .onChange(of: selectedItem) { newItem in
-                        Task {
-                            if let data = try? await newItem?.loadTransferable(type: Data.self),
-                               let uiImage = UIImage(data: data)
-                            {
-                                inputImage = uiImage
-                                thumbnailImage = Image(uiImage: uiImage)
+                        .onChange(of: selectedItem) { newItem in
+                            Task {
+                                if let data = try? await newItem?.loadTransferable(type: Data.self),
+                                   let uiImage = UIImage(data: data)
+                                {
+                                    inputImage = uiImage
+                                    thumbnailImage = Image(uiImage: uiImage)
+                                }
                             }
+                        }
+                        
+                        if let thumbnailImage {
+                            thumbnailImage
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 200)
                         }
                     }
                     
+                    Button(action: {
+                        if let index = recipeData.recipes.firstIndex(where: { $0.title == recipe.title }) {
+                            recipeData.recipes.remove(at: index)
+                        }
+                        dismiss()
+                    }) {
+                        Text("Delete Recipe")
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(Color.red)
+                            .cornerRadius(8)
+                    }
+                    .padding(.top)
+                }
+                .padding()
+            }
+            .navigationTitle("Edit Recipe")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
                         // Create updated recipe
                         var updatedRecipe = Recipe(
@@ -112,18 +181,10 @@ struct EditRecipeView: View {
                         
                         dismiss()
                     }) {
-                        Text("Save Changes")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .cornerRadius(8)
+                        Text("Save")
                     }
-                    .padding(.top)
                 }
-                .padding()
             }
-            .navigationTitle("Edit Recipe")
         }
     }
 }
