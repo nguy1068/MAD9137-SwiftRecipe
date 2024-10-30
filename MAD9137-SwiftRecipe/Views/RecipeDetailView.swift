@@ -81,6 +81,13 @@ struct RecipeDetailView: View {
             .padding()
         }
         .navigationTitle(recipe.title)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: EditRecipeView(recipe: recipe)) {
+                    Text("Edit")
+                }
+            }
+        }
         .onAppear {
             completedSteps = Array(repeating: false, count: recipe.steps.count)
         }
