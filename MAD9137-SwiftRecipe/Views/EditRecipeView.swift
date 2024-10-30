@@ -53,49 +53,11 @@ struct EditRecipeView: View {
                     
                     // Ingredients
                     VStack(alignment: .leading) {
-                        Text("Ingredients")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.horizontal)
-                        
-                        ForEach(recipeIngredients.indices, id: \.self) { index in
-                            HStack {
-                                Text(recipeIngredients[index])
-                                Spacer()
-                                Button(action: {
-                                    recipeIngredients.remove(at: index)
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        
                         IngredientListView(ingredients: $recipeIngredients)
                     }
                     
                     // Steps
                     VStack(alignment: .leading) {
-                        Text("Steps")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.horizontal)
-                        
-                        ForEach(recipeSteps.indices, id: \.self) { index in
-                            HStack {
-                                Text(recipeSteps[index])
-                                Spacer()
-                                Button(action: {
-                                    recipeSteps.remove(at: index)
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        
                         StepsListView(steps: $recipeSteps)
                     }
                     

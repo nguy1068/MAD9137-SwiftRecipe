@@ -61,8 +61,18 @@ struct IngredientListView: View {
                     Image(systemName: "plus.circle.fill")
                 }
             }.padding()
-            ForEach(Array(ingredients.enumerated()), id: \.offset) { index, ingredient in
-                Text("\(index + 1). \(ingredient)")
+            ForEach(ingredients.indices, id: \.self) { index in
+                HStack {
+                    Text(ingredients[index])
+                    Spacer()
+                    Button(action: {
+                        ingredients.remove(at: index)
+                    }) {
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundColor(.red)
+                    }
+                }
+                .padding(.horizontal)
             }
         }
     }
@@ -88,8 +98,18 @@ struct StepsListView: View {
             }
             .padding()
 
-            ForEach(Array(steps.enumerated()), id: \.offset) { index, step in
-                Text("\(index + 1). \(step)")
+            ForEach(steps.indices, id: \.self) { index in
+                HStack {
+                    Text(steps[index])
+                    Spacer()
+                    Button(action: {
+                        steps.remove(at: index)
+                    }) {
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundColor(.red)
+                    }
+                }
+                .padding(.horizontal)
             }
         }
     }

@@ -19,32 +19,63 @@ struct RecipeListView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                ForEach(recipeData.recipes.filter { recipe in
-                    switch searchMode {
-                    case .title:
-                        return searchText.isEmpty || recipe.title.localizedStandardContains(searchText)
-                    case .ingredients:
-                        return searchText.isEmpty || recipe.ingredients.joined(separator: " ").localizedStandardContains(searchText)
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Menu {
+                        Picker("Search Mode", selection: $searchMode) {
+                            ForEach(SearchMode.allCases, id: \.self) { mode in
+                                Text("Search by \(mode.rawValue)").tag(mode)
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Text("Search by \(searchMode.rawValue)")
+                                .font(.caption)
+                            Image(systemName: "chevron.down")
+                                .font(.caption)
+                        }
+                        .foregroundColor(.gray)
                     }
-                }) { recipe in
-                    NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                        HStack(alignment: .top, spacing: 20) {
-                            let uiImage = loadImage(for: recipe) ?? UIImage(named: "default_recipe")
-                            Image(uiImage: uiImage!)
-                                .resizable()
-                                .aspectRatio(contentMode: .fill)
-                                .frame(width: 70, height: 70)
-                                .cornerRadius(8)
-                                .clipped()
+                    .padding(.trailing)
+                }
+                .padding(.bottom, 12)
+                List {
+                    ForEach(recipeData.recipes.filter { recipe in
+                        if searchText.isEmpty {
+                            return true
+                        }
 
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text(recipe.title)
-                                    .font(.headline)
-                                Text(recipe.description.count > 50
-                                    ? String(recipe.description.prefix(50)) + "..."
-                                    : recipe.description)
-                                    .font(.subheadline)
+                        switch searchMode {
+                        case .title:
+                            return recipe.title.localizedStandardContains(searchText)
+                        case .ingredients:
+                            let searchWords = searchText.components(separatedBy: .whitespaces)
+                            return searchWords.allSatisfy { searchWord in
+                                recipe.ingredients.contains { ingredient in
+                                    ingredient.localizedStandardContains(searchWord)
+                                }
+                            }
+                        }
+                    }) { recipe in
+                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                            HStack(alignment: .top, spacing: 20) {
+                                let uiImage = loadImage(for: recipe) ?? UIImage(named: "default_recipe")
+                                Image(uiImage: uiImage!)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fill)
+                                    .frame(width: 70, height: 70)
+                                    .cornerRadius(8)
+                                    .clipped()
+
+                                VStack(alignment: .leading, spacing: 10) {
+                                    Text(recipe.title)
+                                        .font(.headline)
+                                    Text(recipe.description.count > 50
+                                        ? String(recipe.description.prefix(50)) + "..."
+                                        : recipe.description)
+                                        .font(.subheadline)
+                                }
                             }
                         }
                     }
@@ -52,9 +83,8 @@ struct RecipeListView: View {
             }
             .navigationTitle("Recipes")
             .navigationBarTitleDisplayMode(.large)
-            .searchable(text: $searchText)
             .toolbar {
-                ToolbarItem(placement: .automatic) {
+                ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(destination: AddRecipeView()) {
                         Text("Add Recipe")
                         Image(systemName: "plus")
@@ -62,6 +92,7 @@ struct RecipeListView: View {
                     }
                 }
             }
+            .searchable(text: $searchText, prompt: "Search by \(searchMode.rawValue.lowercased())...")
         }
     }
 }
