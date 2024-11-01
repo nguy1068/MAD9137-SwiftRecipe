@@ -60,13 +60,22 @@ struct RecipeListView: View {
                     }) { recipe in
                         NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
                             HStack(alignment: .top, spacing: 20) {
-                                let uiImage = loadImage(for: recipe) ?? UIImage(named: "default_recipe")
-                                Image(uiImage: uiImage!)
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fill)
-                                    .frame(width: 70, height: 70)
-                                    .cornerRadius(8)
-                                    .clipped()
+                                let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
+                                if let uiImage = uiImage {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 70, height: 70)
+                                        .cornerRadius(8)
+                                        .clipped()
+                                } else {
+                                    Image(recipe.thumbnailImagePath ?? "default_recipe")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fill)
+                                        .frame(width: 70, height: 70)
+                                        .cornerRadius(8)
+                                        .clipped()
+                                }
 
                                 VStack(alignment: .leading, spacing: 10) {
                                     Text(recipe.title)

@@ -27,9 +27,16 @@ struct RecipeDetailView: View {
                 .padding(.bottom, 10)
 
                 // Image with 16:9 ratio
-                let uiImage = loadImage(for: recipe) ?? UIImage(named: "default_recipe")
+                let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
                 if let uiImage = uiImage {
                     Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 3 / 4)
+                        .clipped()
+                        .padding(.bottom, 5)
+                } else {
+                    Image("default_recipe") // Fallback image if specific one is not found
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 3 / 4)

@@ -38,7 +38,7 @@ struct EditRecipeView: View {
         
         // Load existing image if available
         if let imagePath = recipe.thumbnailImagePath,
-           let uiImage = loadImage(for: recipe)
+           let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
         {
             _inputImage = State(initialValue: uiImage)
             _thumbnailImage = State(initialValue: Image(uiImage: uiImage))
