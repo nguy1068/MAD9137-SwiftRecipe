@@ -14,21 +14,24 @@ struct TextInput: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(label)
                 .font(.caption)
                 .foregroundColor(.gray)
                 .padding(.bottom, 2)
+                .padding(.horizontal)
 
-            TextField(placeholder, text: $text)
-                .focused($isFocused)
-                .onChange(of: text) { newValue in
-                    print("Current text input: \(newValue)")
-                }
-                .textFieldStyle(CustomTextFieldStyle(isFocused: isFocused))
-                .padding(.vertical, 5)
-                .frame(maxWidth: .infinity)
-        }.padding().padding(.top, 0).padding(.bottom, 0)
+            HStack(alignment: .center) {
+                TextField(placeholder, text: $text)
+                    .focused($isFocused)
+                    .onChange(of: text) { newValue in
+                        print("Current text input: \(newValue)")
+                    }
+                    .textFieldStyle(CustomTextFieldStyle(isFocused: isFocused))
+                    .padding(.vertical, 5)
+            }
+            .padding(.horizontal)
+        }
     }
 }
 
@@ -49,27 +52,57 @@ struct CustomTextFieldStyle: TextFieldStyle {
 struct IngredientListView: View {
     @Binding var ingredients: [String]
     @State private var newIngredient: String = ""
+    @State private var isExpanded: Bool = false 
 
     var body: some View {
         VStack {
-            HStack {
-                TextInput(label: "Ingredients", placeholder: "Add ingredient", text: $newIngredient)
+            HStack(alignment: .center) {
+                TextInput(label: " ", placeholder: "Add ingredient", text: $newIngredient)
                 Button(action: {
-                    ingredients.append(newIngredient)
-                    newIngredient = ""
+                    if !newIngredient.isEmpty {
+                        ingredients.append(newIngredient)
+                        newIngredient = ""
+                        isExpanded = true
+                    }
                 }) {
                     Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.blue)
                 }
-            }.padding()
-            ForEach(ingredients.indices, id: \.self) { index in
+                .padding(.leading, 0)
+                .padding(.trailing)
+                .offset(y: 8)
+            }
+
+            Button(action: {
+                isExpanded.toggle()
+            }) {
                 HStack {
-                    Text(ingredients[index])
+                    Text("Ingredients:")
+                        .font(.subheadline)
+                        .foregroundColor(Color.black)
                     Spacer()
-                    Button(action: {
-                        ingredients.remove(at: index)
-                    }) {
-                        Image(systemName: "minus.circle.fill")
-                            .foregroundColor(.red)
+                    Image(systemName: isExpanded ? "chevron.down" : "chevron.up")
+                        .foregroundColor(Color.black)
+                }
+                .padding(.horizontal)
+            }
+
+            if isExpanded {
+                VStack {
+                    ForEach(ingredients.indices, id: \.self) { index in
+                        HStack {
+                            Text(ingredients[index])
+                                .font(.body)
+                            Spacer()
+                            Button(action: {
+                                ingredients.remove(at: index) // Delete action
+                            }) {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .padding(.vertical, 5)
                     }
                 }
                 .padding(.horizontal)
@@ -84,29 +117,58 @@ struct IngredientListView: View {
 struct StepsListView: View {
     @Binding var steps: [String]
     @State private var newStep: String = ""
+    @State private var isExpanded: Bool = false
 
     var body: some View {
         VStack {
-            HStack {
-                TextInput(label: "Step", placeholder: "Add a new step...", text: $newStep)
+            HStack(alignment: .center) {
+                TextInput(label: " ", placeholder: "Add a new step...", text: $newStep)
                 Button(action: {
-                    steps.append(newStep)
-                    newStep = ""
+                    if !newStep.isEmpty {
+                        steps.append(newStep)
+                        newStep = ""
+                        isExpanded = true
+                    }
                 }) {
                     Image(systemName: "plus.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(.blue)
                 }
+                .padding(.trailing)
+                .offset(y: 8)
             }
-            .padding()
 
-            ForEach(steps.indices, id: \.self) { index in
+            Button(action: {
+                isExpanded.toggle()
+            }) {
                 HStack {
-                    Text(steps[index])
-                    Spacer()
-                    Button(action: {
-                        steps.remove(at: index)
-                    }) {
-                        Image(systemName: "minus.circle.fill")
-                            .foregroundColor(.red)
+                    HStack { Text("Steps:")
+                        .font(.subheadline)
+                        .foregroundColor(Color.black)
+                        Spacer()
+                        Image(systemName: isExpanded ? "chevron.down" : "chevron.up")
+                            .foregroundColor(Color.black)
+                    }
+                }
+
+                .padding(.horizontal)
+            }
+
+            if isExpanded {
+                VStack {
+                    ForEach(steps.indices, id: \.self) { index in
+                        HStack {
+                            Text(steps[index])
+                                .font(.body)
+                            Spacer()
+                            Button(action: {
+                                steps.remove(at: index)
+                            }) {
+                                Image(systemName: "minus.circle.fill")
+                                    .foregroundColor(.red)
+                            }
+                        }
+                        .padding(.vertical, 5)
                     }
                 }
                 .padding(.horizontal)
@@ -139,6 +201,7 @@ struct TimeInputView: View {
 // ChipView-----------------START
 struct ChipView: View {
     var label: String
+
     var body: some View {
         Text(label)
             .padding(.horizontal, 10)

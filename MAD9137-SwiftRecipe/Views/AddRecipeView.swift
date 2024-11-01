@@ -27,75 +27,37 @@ struct AddRecipeView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    // Recipe Title
-                    TextInput(label: "Title", placeholder: "Enter recipe title", text: $recipeTitle)
-                    // Recipe Description
-                    TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription)
-                    // Ingredients
-                    VStack(alignment: .leading) {
-                        Text("Ingredients")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.horizontal)
-                        
-                        ForEach(recipeIngredients.indices, id: \.self) { index in
-                            HStack {
-                                Text(recipeIngredients[index])
-                                Spacer()
-                                Button(action: {
-                                    recipeIngredients.remove(at: index)
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        
-                        IngredientListView(ingredients: $recipeIngredients)
-                    }
-                    
-                    // Steps
-                    VStack(alignment: .leading) {
-                        Text("Steps")
-                            .font(.caption)
-                            .foregroundColor(.gray)
-                            .padding(.horizontal)
-                        
-                        ForEach(recipeSteps.indices, id: \.self) { index in
-                            HStack {
-                                Text(recipeSteps[index])
-                                Spacer()
-                                Button(action: {
-                                    recipeSteps.remove(at: index)
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                            .padding(.horizontal)
-                        }
-                        
-                        StepsListView(steps: $recipeSteps)
-                    }
-                    
-                    // Times
-                    VStack {
-                        TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")
-                        TimeInputView(timeValue: $recipeCookTime, label: "Cook Time (mins)")
-                    }
                     // PhotoPicker
                     PhotosPicker(
                         selection: $selectedItem,
                         matching: .images,
                         photoLibrary: .shared()
                     ) {
-                        Text("Select a Recipe Image")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue.opacity(0.2))
-                            .cornerRadius(8)
+                        VStack {
+                            if let thumbnail = thumbnailImage {
+                                thumbnail
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 200)
+                                    .cornerRadius(8)
+                            } else {
+                                Image(systemName: "photo")
+                                    .font(.system(size: 44))
+                            }
+                            Spacer()
+                            Text("Select a Recipe Image")
+                                .font(.subheadline)
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5]))
+                                .foregroundColor(.blue)
+                        )
                     }
+                    .padding()
                     .onChange(of: selectedItem) { newItem in
                         guard let newItem = newItem else { return }
                         Task {
@@ -108,14 +70,20 @@ struct AddRecipeView: View {
                         }
                     }
 
-                    // Display selected image
-                    if let thumbnail = thumbnailImage {
-                        thumbnail
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 200)
-                            .cornerRadius(8)
-                            .padding(.top)
+                    // Recipe Title
+                    TextInput(label: "Title", placeholder: "Enter recipe title", text: $recipeTitle).padding(.bottom)
+                    // Recipe Description
+                    TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription).padding(.bottom)
+                    // Ingredients
+                    IngredientListView(ingredients: $recipeIngredients).padding(.bottom)
+
+                    // Steps
+                    StepsListView(steps: $recipeSteps).padding(.bottom)
+
+                    // Times
+                    VStack {
+                        TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")
+                        TimeInputView(timeValue: $recipeCookTime, label: "Cook Time (mins)")
                     }
                 }
             }
