@@ -23,6 +23,8 @@ struct EditRecipeView: View {
     @State private var selectedItem: PhotosPickerItem?
     @State private var inputImage: UIImage?
     
+    @State private var navigateToRecipeListView: Bool = false
+    
     init(recipe: Recipe) {
         self.recipe = recipe
         
@@ -47,61 +49,71 @@ struct EditRecipeView: View {
         NavigationStack {
             ScrollView {
                 VStack {
-                    TextInput(label: "Title", placeholder: "Enter recipe title", text: $recipeTitle)
+                    // PhotoPicker
+                    PhotosPicker(
+                        selection: $selectedItem,
+                        matching: .images,
+                        photoLibrary: .shared()
+                    ) {
+                        VStack {
+                            if let thumbnail = thumbnailImage {
+                                thumbnail
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(height: 200)
+                                    .cornerRadius(8)
+                            } else {
+                                Image(systemName: "photo")
+                                    .font(.system(size: 44))
+                            }
+                            Spacer()
+                            Text("Select a Recipe Image")
+                                .font(.subheadline)
+                                .foregroundColor(.blue)
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(style: StrokeStyle(lineWidth: 2, dash: [5]))
+                                .foregroundColor(.blue)
+                        )
+                    }
+                    .padding()
+                    .onChange(of: selectedItem) { newItem in
+                        Task {
+                            if let data = try? await newItem?.loadTransferable(type: Data.self),
+                               let uiImage = UIImage(data: data)
+                            {
+                                inputImage = uiImage
+                                thumbnailImage = Image(uiImage: uiImage)
+                            }
+                        }
+                    }
+                        
+                    // Title
+                    TextInput(label: "Title", placeholder: "Enter recipe title", text: $recipeTitle).padding(.bottom)
                     
-                    TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription)
+                    // Description
+                    TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription).padding(.bottom)
                     
                     // Ingredients
-                    VStack(alignment: .leading) {
-                        IngredientListView(ingredients: $recipeIngredients)
-                    }
-                    
+                    IngredientListView(ingredients: $recipeIngredients).padding(.bottom)
+                
                     // Steps
-                    VStack(alignment: .leading) {
-                        StepsListView(steps: $recipeSteps)
-                    }
-                    
+                    StepsListView(steps: $recipeSteps).padding(.bottom)
+    
+                    // Time inpuy
                     VStack {
                         TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")
                         TimeInputView(timeValue: $recipeCookTime, label: "Cook Time (mins)")
-                    }
-                    
-                    VStack {
-                        PhotosPicker(
-                            selection: $selectedItem,
-                            matching: .images,
-                            photoLibrary: .shared()
-                        ) {
-                            Text("Select a Recipe Image")
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.blue.opacity(0.2))
-                                .cornerRadius(8)
-                        }
-                        .onChange(of: selectedItem) { newItem in
-                            Task {
-                                if let data = try? await newItem?.loadTransferable(type: Data.self),
-                                   let uiImage = UIImage(data: data)
-                                {
-                                    inputImage = uiImage
-                                    thumbnailImage = Image(uiImage: uiImage)
-                                }
-                            }
-                        }
-                        
-                        if let thumbnailImage {
-                            thumbnailImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 200)
-                        }
                     }
                     
                     Button(action: {
                         if let index = recipeData.recipes.firstIndex(where: { $0.title == recipe.title }) {
                             recipeData.recipes.remove(at: index)
                         }
-                        dismiss()
+                        navigateToRecipeListView = true
                     }) {
                         Text("Delete Recipe")
                             .foregroundColor(.white)
@@ -110,9 +122,12 @@ struct EditRecipeView: View {
                             .background(Color.red)
                             .cornerRadius(8)
                     }
-                    .padding(.top)
+                    .padding()
+                    
+                    NavigationLink(destination: RecipeListView(), isActive: $navigateToRecipeListView) {
+                        EmptyView()
+                    }
                 }
-                .padding()
             }
             .navigationTitle("Edit Recipe")
             .toolbar {
@@ -141,7 +156,7 @@ struct EditRecipeView: View {
                             recipeData.editRecipe(at: index, with: updatedRecipe)
                         }
                         
-                        dismiss()
+                        navigateToRecipeListView = true
                     }) {
                         Text("Save")
                     }
