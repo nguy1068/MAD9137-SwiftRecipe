@@ -10,6 +10,7 @@ import SwiftUI
 struct RecipeDetailView: View {
     var recipe: Recipe
     @State private var completedSteps: [Bool] = [] // State for checked steps
+    @State private var isEditing: Bool = false
     init(recipe: Recipe) {
         self.recipe = recipe
         _completedSteps = State(initialValue: Array(repeating: false, count: recipe.steps.count))
@@ -84,6 +85,7 @@ struct RecipeDetailView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 10)
                 }
+
             }
             .padding()
         }
@@ -100,3 +102,6 @@ struct RecipeDetailView: View {
         }
     }
 }
+
+
+

@@ -11,7 +11,6 @@ import SwiftUI
 struct EditRecipeView: View {
     var recipe: Recipe
     @EnvironmentObject var recipeData: RecipeData
-    @Environment(\.dismiss) var dismiss
     
     @State private var recipeTitle: String
     @State private var recipeDescription: String
@@ -22,7 +21,6 @@ struct EditRecipeView: View {
     @State private var thumbnailImage: Image?
     @State private var selectedItem: PhotosPickerItem?
     @State private var inputImage: UIImage?
-    
     @State private var navigateToRecipeListView: Bool = false
     
     init(recipe: Recipe) {
@@ -157,6 +155,7 @@ struct EditRecipeView: View {
                         }
                         
                         navigateToRecipeListView = true
+                        
                     }) {
                         Text("Save")
                     }

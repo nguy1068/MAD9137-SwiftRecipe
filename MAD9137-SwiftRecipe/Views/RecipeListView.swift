@@ -90,6 +90,7 @@ struct RecipeListView: View {
                     }
                 }
             }
+            .navigationBarBackButtonHidden(true)
             .navigationTitle("Recipes")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
