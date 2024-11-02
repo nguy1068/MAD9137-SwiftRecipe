@@ -20,70 +20,84 @@ struct RecipeListView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    Menu {
-                        Picker("Search Mode", selection: $searchMode) {
-                            ForEach(SearchMode.allCases, id: \.self) { mode in
-                                Text("Search by \(mode.rawValue)").tag(mode)
+                if !recipeData.recipes.isEmpty {
+                    HStack {
+                        Spacer()
+                        Menu {
+                            Picker("Search Mode", selection: $searchMode) {
+                                ForEach(SearchMode.allCases, id: \.self) { mode in
+                                    Text("Search by \(mode.rawValue)").tag(mode)
+                                }
                             }
+                        } label: {
+                            HStack {
+                                Text("Search by \(searchMode.rawValue)")
+                                    .font(.caption)
+                                Image(systemName: "chevron.down")
+                                    .font(.caption)
+                            }
+                            .foregroundColor(.gray)
                         }
-                    } label: {
-                        HStack {
-                            Text("Search by \(searchMode.rawValue)")
-                                .font(.caption)
-                            Image(systemName: "chevron.down")
-                                .font(.caption)
-                        }
-                        .foregroundColor(.gray)
+                        .padding(.trailing)
                     }
-                    .padding(.trailing)
+                    .padding(.bottom, 12)
                 }
-                .padding(.bottom, 12)
-                List {
-                    ForEach(recipeData.recipes.filter { recipe in
-                        if searchText.isEmpty {
-                            return true
-                        }
+                if recipeData.recipes.isEmpty {
+                    VStack {
+                        Image("empty_state")
+                            .resizable()
+                            .frame(width: 300, height: 300)
+                            .aspectRatio(contentMode: .fit)
+                    }
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .padding()
+                } else {
+                    List {
+                        ForEach(recipeData.recipes.filter { recipe in
+                            if searchText.isEmpty {
+                                return true
+                            }
 
-                        switch searchMode {
-                        case .title:
-                            return recipe.title.localizedStandardContains(searchText)
-                        case .ingredients:
-                            let searchWords = searchText.components(separatedBy: .whitespaces)
-                            return searchWords.allSatisfy { searchWord in
-                                recipe.ingredients.contains { ingredient in
-                                    ingredient.localizedStandardContains(searchWord)
+                            switch searchMode {
+                            case .title:
+                                return recipe.title.localizedStandardContains(searchText)
+                            case .ingredients:
+                                let searchWords = searchText.components(separatedBy: .whitespaces)
+                                return searchWords.allSatisfy { searchWord in
+                                    recipe.ingredients.contains { ingredient in
+                                        ingredient.localizedStandardContains(searchWord)
+                                    }
                                 }
                             }
-                        }
-                    }) { recipe in
-                        NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
-                            HStack(alignment: .top, spacing: 20) {
-                                let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
-                                if let uiImage = uiImage {
-                                    Image(uiImage: uiImage)
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 70, height: 70)
-                                        .cornerRadius(8)
-                                        .clipped()
-                                } else {
-                                    Image(recipe.thumbnailImagePath ?? "default_recipe")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fill)
-                                        .frame(width: 70, height: 70)
-                                        .cornerRadius(8)
-                                        .clipped()
-                                }
+                        }) { recipe in
+                            NavigationLink(destination: RecipeDetailView(recipe: recipe)) {
+                                HStack(alignment: .top, spacing: 20) {
+                                    let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
+                                    if let uiImage = uiImage {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 70, height: 70)
+                                            .cornerRadius(8)
+                                            .clipped()
+                                    } else {
+                                        Image(recipe.thumbnailImagePath ?? "default_recipe")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fill)
+                                            .frame(width: 70, height: 70)
+                                            .cornerRadius(8)
+                                            .clipped()
+                                    }
 
-                                VStack(alignment: .leading, spacing: 10) {
-                                    Text(recipe.title)
-                                        .font(.headline)
-                                    Text(recipe.description.count > 50
-                                        ? String(recipe.description.prefix(50)) + "..."
-                                        : recipe.description)
-                                        .font(.subheadline)
+                                    VStack(alignment: .leading, spacing: 10) {
+                                        Text(recipe.title)
+                                            .font(.headline)
+                                        Text(recipe.description.count > 50
+                                            ? String(recipe.description.prefix(50)) + "..."
+                                            : recipe.description)
+                                            .font(.subheadline)
+                                    }
                                 }
                             }
                         }

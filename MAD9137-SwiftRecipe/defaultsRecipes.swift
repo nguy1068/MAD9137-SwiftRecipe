@@ -10,22 +10,6 @@ import Foundation
 enum DefaultRecipes {
     static let all: [Recipe] = [
         Recipe(
-            thumbnailImagePath: "pancake",
-            title: "Pancakes",
-            description: "Fluffy and delicious pancakes for breakfast.",
-            ingredients: ["1 cup flour", "2 tablespoons sugar", "1 tablespoon baking powder", "1/2 teaspoon salt", "1 cup milk", "1 egg", "2 tablespoons melted butter"],
-            steps: [
-                "In a bowl, mix flour, sugar, baking powder, and salt.",
-                "In another bowl, whisk together milk, egg, and melted butter.",
-                "Pour the wet ingredients into the dry ingredients and stir until just combined.",
-                "Heat a skillet over medium heat and pour 1/4 cup of batter for each pancake.",
-                "Cook until bubbles form on the surface, then flip and cook until golden brown."
-            ],
-            prepTime: 10,
-            cookTime: 15
-        ),
-        
-        Recipe(
             thumbnailImagePath: "spaghetti",
             title: "Spaghetti Carbonara",
             description: "Classic Italian pasta dish with eggs, cheese, pancetta, and black pepper.",
@@ -134,22 +118,6 @@ enum DefaultRecipes {
             ],
             prepTime: 10,
             cookTime: 30
-        ),
-        Recipe(
-            thumbnailImagePath: "chocolate_cookies",
-            title: "Chocolate Chip Cookies",
-            description: "Classic cookies loaded with chocolate chips.",
-            ingredients: ["1 cup butter", "1 cup sugar", "1 cup brown sugar", "2 eggs", "2 cups flour", "1 teaspoon baking soda", "2 cups chocolate chips", "Salt"],
-            steps: [
-                "Preheat oven to 350°F (175°C).",
-                "Cream together butter, sugar, and brown sugar.",
-                "Add eggs and mix well.",
-                "Stir in flour, baking soda, and salt.",
-                "Fold in chocolate chips.",
-                "Drop spoonfuls onto a baking sheet and bake for 10-12 minutes."
-            ],
-            prepTime: 15,
-            cookTime: 12
         )
     ]
 }
