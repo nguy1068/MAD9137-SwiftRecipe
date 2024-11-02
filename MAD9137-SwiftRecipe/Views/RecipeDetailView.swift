@@ -1,16 +1,9 @@
-//
-//  RecipeDetailView.swift
-//  MAD9137-SwiftRecipe
-//
-//  Created by Dat Nguyen(Mike) on 2024-10-24.
-//
-
 import SwiftUI
 
 struct RecipeDetailView: View {
     var recipe: Recipe
-    @State private var completedSteps: [Bool] = [] // State for checked steps
-    @State private var isEditing: Bool = false
+    @State private var completedSteps: [Bool] = []
+
     init(recipe: Recipe) {
         self.recipe = recipe
         _completedSteps = State(initialValue: Array(repeating: false, count: recipe.steps.count))
@@ -37,7 +30,7 @@ struct RecipeDetailView: View {
                         .clipped()
                         .padding(.bottom, 5)
                 } else {
-                    Image("default_recipe") // Fallback image if specific one is not found
+                    Image("default_recipe")
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.width * 3 / 4)
@@ -76,16 +69,13 @@ struct RecipeDetailView: View {
                         Button(action: {
                             completedSteps[index].toggle()
                         }) {
-                            Image(systemName: completedSteps[index]
-                                ? "checkmark.square.fill"
-                                : "checkmark.square")
+                            Image(systemName: completedSteps[index] ? "checkmark.square.fill" : "checkmark.square")
                         }
                         Text(step).padding(.top, -3)
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 10)
                 }
-
             }
             .padding()
         }
@@ -93,7 +83,7 @@ struct RecipeDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 NavigationLink(destination: EditRecipeView(recipe: recipe)) {
-                    Text("Edit")
+                    Text("Edit").font(.headline)
                 }
             }
         }
@@ -102,6 +92,3 @@ struct RecipeDetailView: View {
         }
     }
 }
-
-
-

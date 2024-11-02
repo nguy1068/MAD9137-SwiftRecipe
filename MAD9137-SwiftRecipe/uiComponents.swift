@@ -48,6 +48,7 @@ struct CustomTextFieldStyle: TextFieldStyle {
 
 // TextINPUT-----------------END
 
+
 // IngredientListView-----------------START
 struct IngredientListView: View {
     @Binding var ingredients: [String]
@@ -112,6 +113,7 @@ struct IngredientListView: View {
 }
 
 // IngredientListView-----------------END
+
 
 // StepsListView-----------------START
 struct StepsListView: View {
@@ -179,6 +181,7 @@ struct StepsListView: View {
 
 // StepsListView-----------------END
 
+
 // TimeInputView-----------------START
 struct TimeInputView: View {
     @Binding var timeValue: Int
@@ -197,6 +200,7 @@ struct TimeInputView: View {
 }
 
 // TimeInputView-----------------END
+
 
 // ChipView-----------------START
 struct ChipView: View {

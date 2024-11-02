@@ -1,10 +1,3 @@
-//
-//  EditRecipeView.swift
-//  MAD9137-SwiftRecipe
-//
-//  Created by Dat Nguyen(Mike) on 2024-10-24.
-//
-
 import PhotosUI
 import SwiftUI
 
@@ -36,8 +29,8 @@ struct EditRecipeView: View {
         _recipeCookTime = State(initialValue: recipe.cookTime)
         
         // Load existing image if available
-        if let _imagePath = recipe.thumbnailImagePath,
-           let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
+        if let imagePath = recipe.thumbnailImagePath,
+           let uiImage = loadImage(for: recipe) ?? UIImage(named: imagePath)
         {
             _inputImage = State(initialValue: uiImage)
             _thumbnailImage = State(initialValue: Image(uiImage: uiImage))
@@ -80,8 +73,9 @@ struct EditRecipeView: View {
                     }
                     .padding()
                     .onChange(of: selectedItem) { newItem in
+                        guard let newItem = newItem else { return }
                         Task {
-                            if let data = try? await newItem?.loadTransferable(type: Data.self),
+                            if let data = try? await newItem.loadTransferable(type: Data.self),
                                let uiImage = UIImage(data: data)
                             {
                                 inputImage = uiImage
@@ -89,7 +83,7 @@ struct EditRecipeView: View {
                             }
                         }
                     }
-                        
+                    
                     // Title
                     TextInput(label: "Title", placeholder: "Enter recipe title", text: $recipeTitle).padding(.bottom)
                     
@@ -101,8 +95,8 @@ struct EditRecipeView: View {
                 
                     // Steps
                     StepsListView(steps: $recipeSteps).padding(.bottom)
-    
-                    // Time inpuy
+                    
+                    // Time input
                     VStack {
                         TimeInputView(timeValue: $recipePrepTime, label: "Prep Time (mins)")
                         TimeInputView(timeValue: $recipeCookTime, label: "Cook Time (mins)")
@@ -148,10 +142,10 @@ struct EditRecipeView: View {
                             )
                             
                             // Save new image if selected
-                            if let inputImage = inputImage {
-                                if let imagePath = saveImage(image: inputImage, for: updatedRecipe) {
-                                    updatedRecipe.thumbnailImagePath = imagePath
-                                }
+                            if let inputImage = inputImage,
+                               let imagePath = saveImage(image: inputImage, for: updatedRecipe)
+                            {
+                                updatedRecipe.thumbnailImagePath = imagePath
                             }
                             
                             // Find index of recipe to update
@@ -162,7 +156,7 @@ struct EditRecipeView: View {
                             navigateToRecipeListView = true
                         }
                     }) {
-                        Text("Save")
+                        Text("Save").font(.headline)
                     }
                 }
             }

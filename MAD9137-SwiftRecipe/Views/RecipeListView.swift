@@ -105,12 +105,12 @@ struct RecipeListView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
-            .navigationTitle("Recipes")
+            .navigationTitle("OmRecipes 🍳🍤🍱🥙")
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink(destination: AddRecipeView()) {
-                        Text("Add Recipe")
+                        Text("Add Recipe").font(.headline)
                         Image(systemName: "plus")
                             .font(.headline)
                     }

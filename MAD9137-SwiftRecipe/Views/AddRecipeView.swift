@@ -1,10 +1,3 @@
-//
-//  AddRecipeView.swift
-//  MAD9137-SwiftRecipe
-//
-//  Created by Dat Nguyen(Mike) on 2024-10-24.
-//
-
 import PhotosUI
 import SwiftUI
 
@@ -18,7 +11,6 @@ struct AddRecipeView: View {
     @State private var recipeSteps: [String] = []
     @State private var recipePrepTime: Int = 0
     @State private var recipeCookTime: Int = 0
-    @State private var showingImagePicker: Bool = false
     @State private var inputImage: UIImage?
     @State private var thumbnailImage: Image?
     @State private var selectedItem: PhotosPickerItem?
@@ -77,7 +69,6 @@ struct AddRecipeView: View {
                     TextInput(label: "Description", placeholder: "Enter a brief description", text: $recipeDescription).padding(.bottom)
                     // Ingredients
                     IngredientListView(ingredients: $recipeIngredients).padding(.bottom)
-
                     // Steps
                     StepsListView(steps: $recipeSteps).padding(.bottom)
 
@@ -91,7 +82,7 @@ struct AddRecipeView: View {
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button("Save") {
-                        if recipeTitle.isEmpty || recipeDescription.isEmpty || recipeIngredients.isEmpty || recipeSteps.isEmpty {
+                        if recipeTitle.isEmpty || recipeDescription.isEmpty || recipeIngredients.isEmpty || recipeSteps.isEmpty || recipePrepTime == 0 || recipeCookTime == 0 {
                             showAlert = true
                         } else {
                             var newRecipe = Recipe(
@@ -123,11 +114,5 @@ struct AddRecipeView: View {
         .alert(isPresented: $showAlert) {
             Alert(title: Text("Error"), message: Text("Please fill in all the required fields."), dismissButton: .default(Text("OK")))
         }
-    }
-}
-
-struct AddRecipeView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddRecipeView()
     }
 }
