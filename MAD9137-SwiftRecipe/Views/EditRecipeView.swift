@@ -22,6 +22,7 @@ struct EditRecipeView: View {
     @State private var selectedItem: PhotosPickerItem?
     @State private var inputImage: UIImage?
     @State private var navigateToRecipeListView: Bool = false
+    @State private var showAlert: Bool = false
     
     init(recipe: Recipe) {
         self.recipe = recipe
@@ -35,7 +36,7 @@ struct EditRecipeView: View {
         _recipeCookTime = State(initialValue: recipe.cookTime)
         
         // Load existing image if available
-        if let imagePath = recipe.thumbnailImagePath,
+        if let _imagePath = recipe.thumbnailImagePath,
            let uiImage = loadImage(for: recipe) ?? UIImage(named: recipe.thumbnailImagePath ?? "default_recipe")
         {
             _inputImage = State(initialValue: uiImage)
@@ -131,36 +132,43 @@ struct EditRecipeView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button(action: {
-                        // Create updated recipe
-                        var updatedRecipe = Recipe(
-                            thumbnailImagePath: recipe.thumbnailImagePath,
-                            title: recipeTitle,
-                            description: recipeDescription,
-                            ingredients: recipeIngredients,
-                            steps: recipeSteps,
-                            prepTime: recipePrepTime,
-                            cookTime: recipeCookTime
-                        )
-                        
-                        // Save new image if selected
-                        if let inputImage = inputImage {
-                            if let imagePath = saveImage(image: inputImage, for: updatedRecipe) {
-                                updatedRecipe.thumbnailImagePath = imagePath
+                        // Check if any of the required fields are empty
+                        if recipeTitle.isEmpty || recipeDescription.isEmpty || recipeIngredients.isEmpty || recipeSteps.isEmpty || recipePrepTime == 0 || recipeCookTime == 0 {
+                            showAlert = true
+                        } else {
+                            // Create updated recipe
+                            var updatedRecipe = Recipe(
+                                thumbnailImagePath: recipe.thumbnailImagePath,
+                                title: recipeTitle,
+                                description: recipeDescription,
+                                ingredients: recipeIngredients,
+                                steps: recipeSteps,
+                                prepTime: recipePrepTime,
+                                cookTime: recipeCookTime
+                            )
+                            
+                            // Save new image if selected
+                            if let inputImage = inputImage {
+                                if let imagePath = saveImage(image: inputImage, for: updatedRecipe) {
+                                    updatedRecipe.thumbnailImagePath = imagePath
+                                }
                             }
+                            
+                            // Find index of recipe to update
+                            if let index = recipeData.recipes.firstIndex(where: { $0.title == recipe.title }) {
+                                recipeData.editRecipe(at: index, with: updatedRecipe)
+                            }
+                            
+                            navigateToRecipeListView = true
                         }
-                        
-                        // Find index of recipe to update
-                        if let index = recipeData.recipes.firstIndex(where: { $0.title == recipe.title }) {
-                            recipeData.editRecipe(at: index, with: updatedRecipe)
-                        }
-                        
-                        navigateToRecipeListView = true
-                        
                     }) {
                         Text("Save")
                     }
                 }
             }
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text("Please fill in all the required fields."), dismissButton: .default(Text("OK")))
         }
     }
 }

@@ -22,6 +22,7 @@ struct AddRecipeView: View {
     @State private var inputImage: UIImage?
     @State private var thumbnailImage: Image?
     @State private var selectedItem: PhotosPickerItem?
+    @State private var showAlert: Bool = false
 
     var body: some View {
         NavigationStack {
@@ -90,30 +91,37 @@ struct AddRecipeView: View {
             .toolbar {
                 ToolbarItem(placement: .automatic) {
                     Button("Save") {
-                        var newRecipe = Recipe(
-                            thumbnailImagePath: nil,
-                            title: recipeTitle,
-                            description: recipeDescription,
-                            ingredients: recipeIngredients,
-                            steps: recipeSteps,
-                            prepTime: recipePrepTime,
-                            cookTime: recipeCookTime
-                        )
-
-                        if let image = inputImage {
-                            let imagePath = saveImage(image: image, for: newRecipe) ?? "default_recipe"
-                            newRecipe.thumbnailImagePath = imagePath
+                        if recipeTitle.isEmpty || recipeDescription.isEmpty || recipeIngredients.isEmpty || recipeSteps.isEmpty {
+                            showAlert = true
                         } else {
-                            newRecipe.thumbnailImagePath = "default_recipe"
-                        }
+                            var newRecipe = Recipe(
+                                thumbnailImagePath: nil,
+                                title: recipeTitle,
+                                description: recipeDescription,
+                                ingredients: recipeIngredients,
+                                steps: recipeSteps,
+                                prepTime: recipePrepTime,
+                                cookTime: recipeCookTime
+                            )
 
-                        recipeData.addNewRecipe(recipe: newRecipe)
-                        dismiss()
+                            if let image = inputImage {
+                                let imagePath = saveImage(image: image, for: newRecipe) ?? "default_recipe"
+                                newRecipe.thumbnailImagePath = imagePath
+                            } else {
+                                newRecipe.thumbnailImagePath = "default_recipe"
+                            }
+
+                            recipeData.addNewRecipe(recipe: newRecipe)
+                            dismiss()
+                        }
                     }
                     .font(.headline)
                     .foregroundColor(.blue)
                 }
             }
+        }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text("Error"), message: Text("Please fill in all the required fields."), dismissButton: .default(Text("OK")))
         }
     }
 }
